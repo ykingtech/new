@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Custom scrollbar for a cleaner look */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1f2937; }
         ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
@@ -60,7 +59,8 @@
         </div>
 
         <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md h-fit">
-            <h2 class="text-xl font-semibold mb-4 text-purple-400">MCQ Marks Tracker (Out of 50)</h2>
+            <h2 class="text-xl font-semibold mb-4 text-purple-400">Part A Marks Tracker (Out of 50)</h2>
+            <p class="text-xs text-gray-400 mb-4">Physics/Chem MCQ ලකුණු සහ Maths A කොටසේ ප්‍රශ්න 10 ලකුණු (50ට හරවලා) මෙතනට දාන්න.</p>
             
             <div class="flex space-x-2 mb-6">
                 <select id="subjectSelect" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
@@ -80,30 +80,28 @@
     </main>
 
     <script>
-        // --- 1. Date & Progress Logic ---
-        const startDate = new Date().getTime(); // Set to current time for demo
-        const endDate = startDate + (120 * 24 * 60 * 60 * 1000); // 4 months (120 days)
-        
+        // --- 1. Date & Progress Logic (Fixed for real-time tracking) ---
         document.getElementById('currentDate').innerText = new Date().toLocaleDateString('si-LK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
         function updateProgress() {
-            // For a real app, you'd save startDate in LocalStorage. For now, we simulate a 120-day timeline.
-            let storedStart = localStorage.getItem('missionStart');
+            const now = new Date().getTime();
+            
+            // Using a new key (_v2) to reset your previous data and start fresh today
+            let storedStart = localStorage.getItem('missionStart_v2');
             if(!storedStart) {
-                localStorage.setItem('missionStart', startDate);
-                storedStart = startDate;
+                localStorage.setItem('missionStart_v2', now);
+                storedStart = now;
             }
             
-            const now = new Date().getTime();
-            const totalDuration = endDate - storedStart;
-            const passed = now - storedStart;
+            const endDate = parseInt(storedStart) + (120 * 24 * 60 * 60 * 1000); // 120 days from start date
+            const totalDuration = endDate - parseInt(storedStart);
+            const passed = now - parseInt(storedStart);
             
             let percent = Math.min(Math.max((passed / totalDuration) * 100, 0), 100);
             let daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
             
-            // Hardcoded for demo visualization
-            percent = 5; 
-            daysLeft = 114;
+            // Failsafe if days go negative
+            if (daysLeft < 0) daysLeft = 0;
 
             document.getElementById('progressBar').style.width = percent + '%';
             document.getElementById('progressPercent').innerText = percent.toFixed(1) + '%';
@@ -111,15 +109,15 @@
         }
         updateProgress();
 
-        // --- 2. Task List Logic ---
+        // --- 2. Task List Logic (Updated for Maths) ---
         const defaultTasks = [
-            { id: 1, subject: 'Maths', text: '05:00 AM - 08:30 AM: Pure Maths Past Paper (15 MCQs + 1 Essay)', done: false },
+            { id: 1, subject: 'Maths', text: '05:00 AM - 08:30 AM: Pure Maths Past Paper (Part A කෙටි ප්‍රශ්න 10 + 1 Essay)', done: false },
             { id: 2, subject: 'Physics', text: '09:30 AM - 01:00 PM: Mechanics Concepts via NotebookLM summary', done: false },
             { id: 3, subject: 'Chemistry', text: '02:30 PM - 06:00 PM: Organic Conversions (10 Reactions map)', done: false },
             { id: 4, subject: 'All', text: '07:00 PM - 10:30 PM: Marking Scheme Analysis & Corrections', done: false },
         ];
 
-        let tasks = JSON.parse(localStorage.getItem('alTasks')) || defaultTasks;
+        let tasks = JSON.parse(localStorage.getItem('alTasks_v2')) || defaultTasks;
 
         function renderTasks() {
             const list = document.getElementById('taskList');
@@ -142,7 +140,7 @@
                 `;
                 list.appendChild(taskDiv);
             });
-            localStorage.setItem('alTasks', JSON.stringify(tasks));
+            localStorage.setItem('alTasks_v2', JSON.stringify(tasks));
         }
 
         function toggleTask(id) {
@@ -157,13 +155,13 @@
         }
         renderTasks();
 
-        // --- 3. Chart & Marks Logic ---
-        let marksData = JSON.parse(localStorage.getItem('alMarksData')) || {
-            labels: ['Week 1', 'Week 2', 'Week 3'],
+        // --- 3. Chart & Marks Logic (Resetting Demo Data) ---
+        let marksData = JSON.parse(localStorage.getItem('alMarksData_v2')) || {
+            labels: [], // Starting fresh
             datasets: [
-                { label: 'Physics', data: [15, 22, 28], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', tension: 0.3, fill: true },
-                { label: 'Chemistry', data: [12, 18, 25], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', tension: 0.3, fill: true },
-                { label: 'Maths', data: [20, 25, 30], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', tension: 0.3, fill: true }
+                { label: 'Physics', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', tension: 0.3, fill: true },
+                { label: 'Chemistry', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', tension: 0.3, fill: true },
+                { label: 'Maths', data: [], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', tension: 0.3, fill: true }
             ]
         };
 
@@ -188,21 +186,21 @@
             
             if (isNaN(mark) || mark < 0 || mark > 50) return alert('Enter a valid mark between 0 and 50');
 
-            // Find correct dataset
             const datasetIndex = subject === 'physics' ? 0 : subject === 'chemistry' ? 1 : 2;
             
-            // Add new label if needed
+            // Calculate which paper/day number this is to add a proper label
             const currentDataLength = marksData.datasets[datasetIndex].data.length;
-            if(currentDataLength >= marksData.labels.length) {
-                marksData.labels.push(`Week ${marksData.labels.length + 1}`);
+            const labelName = `Paper ${currentDataLength + 1}`;
+            
+            // Only add a new label if it doesn't exist to keep the graph aligned
+            if(!marksData.labels.includes(labelName)) {
+                marksData.labels.push(labelName);
             }
 
-            // Push data and update chart
             marksData.datasets[datasetIndex].data.push(mark);
             marksChart.update();
             
-            // Save to local storage
-            localStorage.setItem('alMarksData', JSON.stringify(marksData));
+            localStorage.setItem('alMarksData_v2', JSON.stringify(marksData));
             document.getElementById('markInput').value = '';
         }
     </script>
