@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="si">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A/L Mission: S to A Tracker</title>
+    <title>A/L මෙහෙයුම: 3A සිහිනය</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -11,118 +11,125 @@
         ::-webkit-scrollbar-track { background: #1f2937; }
         ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@300;400;600;700&display=swap');
+        body { font-family: 'Noto Sans Sinhala', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 font-sans min-h-screen">
+<body class="bg-gray-900 text-gray-100 min-h-screen">
 
     <nav class="bg-gray-800 border-b border-gray-700 p-4 shadow-lg">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-blue-500 tracking-wider">Zero to Hero <span class="text-white text-sm font-normal bg-blue-600 px-2 py-1 rounded ml-2">4-Month Timeline</span></h1>
+            <h1 class="text-2xl font-bold text-blue-500 tracking-wider">Zero to Hero <span class="text-white text-sm font-normal bg-blue-600 px-2 py-1 rounded ml-2">දින 120 සැලැස්ම</span></h1>
             <div class="text-sm text-gray-400" id="currentDate"></div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <main class="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
         
-        <div class="lg:col-span-2 space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md">
-                <h2 class="text-xl font-semibold mb-4 text-green-400">Mission Progress</h2>
-                <div class="relative pt-1">
-                    <div class="flex mb-2 items-center justify-between">
-                        <div>
-                            <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-200" id="daysLeftBadge">
-                                Days Left: 120
-                            </span>
+            <div class="lg:col-span-2 space-y-6">
+                
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md">
+                    <h2 class="text-xl font-semibold mb-4 text-green-400">මෙහෙයුමේ ප්‍රගතිය</h2>
+                    <div class="relative pt-1">
+                        <div class="flex mb-2 items-center justify-between">
+                            <div>
+                                <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-200" id="daysLeftBadge">
+                                    ඉතිරි දින: 120
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-semibold inline-block text-green-400" id="progressPercent">
+                                    0%
+                                </span>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <span class="text-xs font-semibold inline-block text-green-400" id="progressPercent">
-                                0%
-                            </span>
+                        <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-700">
+                            <div id="progressBar" style="width: 0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500 transition-all duration-500"></div>
                         </div>
                     </div>
-                    <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-700">
-                        <div id="progressBar" style="width: 0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500 transition-all duration-500"></div>
+                </div>
+
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold text-yellow-400">අද දවසේ වැඩ කොටස</h2>
+                        <button onclick="resetTasks()" class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded transition">දවස අලුත් කරන්න</button>
                     </div>
+                    
+                    <div class="space-y-3" id="taskList">
+                        </div>
                 </div>
             </div>
 
-            <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-yellow-400">Today's Action Plan</h2>
-                    <button onclick="resetTasks()" class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded transition">Reset Day</button>
-                </div>
+            <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md h-fit">
+                <h2 class="text-xl font-semibold mb-2 text-purple-400">A කොටසේ ලකුණු සටහන (50න්)</h2>
+                <p class="text-xs text-gray-400 mb-4">Physics/Chem MCQ ලකුණු සහ Maths A කොටසේ ප්‍රශ්න 10 ලකුණු මෙතනට දාන්න.</p>
                 
-                <div class="space-y-3" id="taskList">
-                    </div>
+                <div class="flex space-x-2 mb-6">
+                    <select id="subjectSelect" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <option value="physics">භෞතික විද්‍යාව (Physics)</option>
+                        <option value="chemistry">රසායන විද්‍යාව (Chemistry)</option>
+                        <option value="maths">සංයුක්ත ගණිතය (Maths)</option>
+                    </select>
+                    <input type="number" id="markInput" placeholder="ලකුණු" min="0" max="50" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-24 p-2.5">
+                    <button onclick="addMark()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition">එකතු කරන්න</button>
+                </div>
+
+                <div class="relative h-64 w-full">
+                    <canvas id="marksChart"></canvas>
+                </div>
             </div>
         </div>
 
-        <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md h-fit">
-            <h2 class="text-xl font-semibold mb-4 text-purple-400">Part A Marks Tracker (Out of 50)</h2>
-            <p class="text-xs text-gray-400 mb-4">Physics/Chem MCQ ලකුණු සහ Maths A කොටසේ ප්‍රශ්න 10 ලකුණු (50ට හරවලා) මෙතනට දාන්න.</p>
-            
-            <div class="flex space-x-2 mb-6">
-                <select id="subjectSelect" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                    <option value="physics">Physics</option>
-                    <option value="chemistry">Chemistry</option>
-                    <option value="maths">Combined Maths</option>
-                </select>
-                <input type="number" id="markInput" placeholder="Marks" min="0" max="50" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-24 p-2.5">
-                <button onclick="addMark()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition">Add</button>
-            </div>
-
-            <div class="relative h-64 w-full">
-                <canvas id="marksChart"></canvas>
-            </div>
+        <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md">
+            <h2 class="text-2xl font-semibold mb-6 text-white border-b border-gray-700 pb-2">විෂය නිර්දේශය - පාඩම් සූචිය (Syllabus Tracker)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="syllabusContainer">
+                </div>
         </div>
 
     </main>
 
     <script>
-        // --- 1. Date & Progress Logic (Fixed for real-time tracking) ---
-        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('si-LK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        // --- 1. Date & Progress ---
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('si-LK', options);
 
         function updateProgress() {
             const now = new Date().getTime();
-            
-            // Using a new key (_v2) to reset your previous data and start fresh today
-            let storedStart = localStorage.getItem('missionStart_v2');
+            let storedStart = localStorage.getItem('missionStart_v3');
             if(!storedStart) {
-                localStorage.setItem('missionStart_v2', now);
+                localStorage.setItem('missionStart_v3', now);
                 storedStart = now;
             }
             
-            const endDate = parseInt(storedStart) + (120 * 24 * 60 * 60 * 1000); // 120 days from start date
+            const endDate = parseInt(storedStart) + (120 * 24 * 60 * 60 * 1000);
             const totalDuration = endDate - parseInt(storedStart);
             const passed = now - parseInt(storedStart);
             
             let percent = Math.min(Math.max((passed / totalDuration) * 100, 0), 100);
             let daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
-            
-            // Failsafe if days go negative
             if (daysLeft < 0) daysLeft = 0;
 
             document.getElementById('progressBar').style.width = percent + '%';
             document.getElementById('progressPercent').innerText = percent.toFixed(1) + '%';
-            document.getElementById('daysLeftBadge').innerText = `Days Left: ${daysLeft}`;
+            document.getElementById('daysLeftBadge').innerText = `ඉතිරි දින: ${daysLeft}`;
         }
         updateProgress();
 
-        // --- 2. Task List Logic (Updated for Maths) ---
+        // --- 2. Task List Logic ---
         const defaultTasks = [
-            { id: 1, subject: 'Maths', text: '05:00 AM - 08:30 AM: Pure Maths Past Paper (Part A කෙටි ප්‍රශ්න 10 + 1 Essay)', done: false },
-            { id: 2, subject: 'Physics', text: '09:30 AM - 01:00 PM: Mechanics Concepts via NotebookLM summary', done: false },
-            { id: 3, subject: 'Chemistry', text: '02:30 PM - 06:00 PM: Organic Conversions (10 Reactions map)', done: false },
-            { id: 4, subject: 'All', text: '07:00 PM - 10:30 PM: Marking Scheme Analysis & Corrections', done: false },
+            { id: 1, subject: 'Maths', text: 'පාන්දර 05:00 - 08:30: ශුද්ධ ගණිතය Past Paper (A කොටස + 1 රචනා)', done: false },
+            { id: 2, subject: 'Physics', text: 'උදේ 09:30 - 01:00: යාන්ත්‍ර විද්‍යාව - NotebookLM කෙටි සටහන් කියවීම', done: false },
+            { id: 3, subject: 'Chemistry', text: 'හවස 02:30 - 06:00: කාබනික රසායනය - පරිවර්තන (Conversions) 10ක්', done: false },
+            { id: 4, subject: 'All', text: 'රෑ 07:00 - 10:30: Marking Scheme බැලීම සහ වැරදි නිවැරදි කරගැනීම', done: false },
         ];
 
-        let tasks = JSON.parse(localStorage.getItem('alTasks_v2')) || defaultTasks;
+        let tasks = JSON.parse(localStorage.getItem('alTasks_v3')) || defaultTasks;
 
         function renderTasks() {
             const list = document.getElementById('taskList');
             list.innerHTML = '';
-            
             tasks.forEach(task => {
                 const subjectColor = task.subject === 'Maths' ? 'border-blue-500' : 
                                      task.subject === 'Physics' ? 'border-red-500' : 
@@ -130,7 +137,11 @@
                 
                 const taskDiv = document.createElement('div');
                 taskDiv.className = `flex items-center p-4 bg-gray-700 rounded-lg border-l-4 ${subjectColor} hover:bg-gray-600 transition cursor-pointer`;
-                taskDiv.onclick = () => toggleTask(task.id);
+                taskDiv.onclick = () => {
+                    task.done = !task.done;
+                    localStorage.setItem('alTasks_v3', JSON.stringify(tasks));
+                    renderTasks();
+                };
                 
                 taskDiv.innerHTML = `
                     <input type="checkbox" class="w-5 h-5 text-blue-600 bg-gray-800 border-gray-500 rounded focus:ring-blue-500 focus:ring-2 pointer-events-none" ${task.done ? 'checked' : ''}>
@@ -140,28 +151,21 @@
                 `;
                 list.appendChild(taskDiv);
             });
-            localStorage.setItem('alTasks_v2', JSON.stringify(tasks));
         }
-
-        function toggleTask(id) {
-            const task = tasks.find(t => t.id === id);
-            task.done = !task.done;
-            renderTasks();
-        }
-
         function resetTasks() {
             tasks.forEach(t => t.done = false);
+            localStorage.setItem('alTasks_v3', JSON.stringify(tasks));
             renderTasks();
         }
         renderTasks();
 
-        // --- 3. Chart & Marks Logic (Resetting Demo Data) ---
-        let marksData = JSON.parse(localStorage.getItem('alMarksData_v2')) || {
-            labels: [], // Starting fresh
+        // --- 3. Chart & Marks Logic ---
+        let marksData = JSON.parse(localStorage.getItem('alMarksData_v3')) || {
+            labels: [],
             datasets: [
-                { label: 'Physics', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', tension: 0.3, fill: true },
-                { label: 'Chemistry', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', tension: 0.3, fill: true },
-                { label: 'Maths', data: [], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', tension: 0.3, fill: true }
+                { label: 'භෞතික විද්‍යාව', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', tension: 0.3, fill: true },
+                { label: 'රසායන විද්‍යාව', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', tension: 0.3, fill: true },
+                { label: 'සංයුක්ත ගණිතය', data: [], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', tension: 0.3, fill: true }
             ]
         };
 
@@ -170,39 +174,78 @@
             type: 'line',
             data: marksData,
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
+                responsive: true, maintainAspectRatio: false,
                 scales: {
                     y: { beginAtZero: true, max: 50, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } },
                     x: { grid: { color: '#374151' }, ticks: { color: '#9ca3af' } }
                 },
-                plugins: { legend: { labels: { color: '#e5e7eb' } } }
+                plugins: { legend: { labels: { color: '#e5e7eb', font: { family: 'Noto Sans Sinhala' } } } }
             }
         });
 
         function addMark() {
             const subject = document.getElementById('subjectSelect').value;
             const mark = parseInt(document.getElementById('markInput').value);
-            
-            if (isNaN(mark) || mark < 0 || mark > 50) return alert('Enter a valid mark between 0 and 50');
+            if (isNaN(mark) || mark < 0 || mark > 50) return alert('කරුණාකර 0ත් 50ත් අතර අගයක් ඇතුළත් කරන්න.');
 
             const datasetIndex = subject === 'physics' ? 0 : subject === 'chemistry' ? 1 : 2;
-            
-            // Calculate which paper/day number this is to add a proper label
             const currentDataLength = marksData.datasets[datasetIndex].data.length;
-            const labelName = `Paper ${currentDataLength + 1}`;
+            const labelName = `ප්‍රශ්න පත්‍රය ${currentDataLength + 1}`;
             
-            // Only add a new label if it doesn't exist to keep the graph aligned
-            if(!marksData.labels.includes(labelName)) {
-                marksData.labels.push(labelName);
-            }
+            if(!marksData.labels.includes(labelName)) marksData.labels.push(labelName);
 
             marksData.datasets[datasetIndex].data.push(mark);
             marksChart.update();
-            
-            localStorage.setItem('alMarksData_v2', JSON.stringify(marksData));
+            localStorage.setItem('alMarksData_v3', JSON.stringify(marksData));
             document.getElementById('markInput').value = '';
         }
+
+        // --- 4. Syllabus Tracker Logic ---
+        const syllabusData = {
+            physics: { title: "භෞතික විද්‍යාව (Physics)", color: "text-red-400", border: "border-red-500", lessons: ["මිනුම", "යාන්ත්‍ර විද්‍යාව", "දෝලන හා තරංග", "තාප භෞතික විද්‍යාව", "ගුරුත්වාකර්ෂණ ක්ෂේත්‍ර", "ස්ථිති විද්‍යුත් ක්ෂේත්‍ර", "චුම්භක ක්ෂේත්‍ර", "ධාරා විද්‍යුතය", "ඉලෙක්ට්‍රොනික්ස්", "පදාර්ථයේ යාන්ත්‍රික ගුණ", "පදාර්ථය හා විකිරණ"] },
+            chemistry: { title: "රසායන විද්‍යාව (Chemistry)", color: "text-green-400", border: "border-green-500", lessons: ["පරමාණුක ව්‍යුහය", "ව්‍යුහය හා බන්ධන", "රසායනික ගණනය කිරීම්", "පදාර්ථයේ වායු අවස්ථාව", "ශක්ති විද්‍යාව", "s, p, d ගොනු", "මූලික කාබනික රසායනය", "චාලක විද්‍යාව සහ සමතුලිතතාව", "විද්‍යුත් රසායනය", "කාර්මික රසායනය සහ පරිසරය"] },
+            maths: { title: "සංයුක්ත ගණිතය (Maths)", color: "text-blue-400", border: "border-blue-500", lessons: ["තාත්වික සංඛ්‍යා හා ශ්‍රිත", "බහුපද ශ්‍රිත හා වර්ගජ සමීකරණ", "ත්‍රිකෝණමිතිය", "සීමාව හා අවකලනය", "අනුකලනය", "සරල රේඛාව හා වෘත්තය", "ශ්‍රේණි", "දෛශික හා සමතල බල පද්ධති", "ඝර්ෂණය හා ගුරුත්ව කේන්ද්‍රය", "සෘජුකෝණී චලිතය හා සාපේක්ෂ ප්‍රවේගය", "නිව්ටන් නියම", "කාර්යය, ශක්තිය, ජවය", "ආවේගය සහ ගැටුම්", "ප්‍රක්ෂිප්ත හා වෘත්ත චලිතය", "සම්භාවිතාව හා සංඛ්‍යානය"] }
+        };
+
+        let savedSyllabus = JSON.parse(localStorage.getItem('alSyllabus_v1')) || {};
+
+        function renderSyllabus() {
+            const container = document.getElementById('syllabusContainer');
+            container.innerHTML = '';
+
+            Object.keys(syllabusData).forEach(key => {
+                const subject = syllabusData[key];
+                if (!savedSyllabus[key]) savedSyllabus[key] = new Array(subject.lessons.length).fill(false);
+
+                let listHtml = subject.lessons.map((lesson, index) => {
+                    const isDone = savedSyllabus[key][index];
+                    return `
+                        <li class="flex items-center space-x-3 mb-2 cursor-pointer hover:bg-gray-700 p-1 rounded transition" onclick="toggleSyllabus('${key}', ${index})">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-800 border-gray-500 rounded pointer-events-none" ${isDone ? 'checked' : ''}>
+                            <span class="text-sm ${isDone ? 'line-through text-gray-500' : 'text-gray-300'}">${lesson}</span>
+                        </li>
+                    `;
+                }).join('');
+
+                const section = document.createElement('div');
+                section.className = `bg-gray-800 p-4 border-t-4 ${subject.border} rounded-b-lg shadow-inner`;
+                section.innerHTML = `
+                    <h3 class="text-lg font-bold mb-4 ${subject.color}">${subject.title}</h3>
+                    <ul class="h-64 overflow-y-auto pr-2">
+                        ${listHtml}
+                    </ul>
+                `;
+                container.appendChild(section);
+            });
+        }
+
+        function toggleSyllabus(subjectKey, index) {
+            savedSyllabus[subjectKey][index] = !savedSyllabus[subjectKey][index];
+            localStorage.setItem('alSyllabus_v1', JSON.stringify(savedSyllabus));
+            renderSyllabus();
+        }
+        
+        renderSyllabus();
     </script>
 </body>
 </html>
